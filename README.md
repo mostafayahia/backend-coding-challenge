@@ -38,8 +38,6 @@ types of errors:
 - 500: Internal Server Error
 
 ### Endpoints
-**Before running any authorized endpoint, please make sure you setup NOT expired tokens in `./setup.sh`**<br>
-**then running the command `source ./setup.sh`**
 #### GET /trending_repos
 - ##### General:
   - Return a list of repos classified by each language and a success value.
