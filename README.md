@@ -1,49 +1,93 @@
-# backend-coding-challenge
+# Backend-Coding-Challenge
+It is a [backend-coding-challenge](https://github.com/gemography/backend-coding-challenge). My task was to implement an endpoint api to get trending repos in github and classify them by language.
 
-The coding challenge is optional if you already have some code on Github that you're proud of and can share with us. If you do, skip to the bottom of this document. 
+### Getting Started
 
-If you don't already have code to share, you can work on our coding challenge described below 👇.
-
-Please organize, design and document your code as if it were going into production, then send us a link to the hosted repository (e.g. Github, Bitbucket, Gitlab...).
-
-## Technical specs
-
-We believe good engineering is about using the right tool for the right job, and constantly learning about them.
-
-You can **use any web framework**, but here's some of the technologies our teams are familiar with: Python, Javascript, Ruby, PHP, Go, Java, Elixir.
-
-No need to use database or caching system.
-
-## Functional specs
-
-- Develop a REST microservice that list the languages used by the 100 trending public repos on GitHub.
-- For every language, you need to calculate the attributes below 👇:
-    - Number of repos using this language
-    - The list of repos using the language
-
-## How to get Trending Repos from Github
-
-Fetching trending repositories simply translates to fetching the most starred repos created in the last 30 days ( from now ). To do that, you'll need to call the following endpoint:
-
+#### Run app locally
+- install all packages needed to run the app `pip3 install -r requirements.txt`
+- then you can run the following commands (from the root directory)
 ```
-https://api.github.com/search/repositories?q=created:>{date}&sort=stars&order=desc
+export FLASK_APP=app.py 
+export FLASK_ENV=development
+flask run
+```
+The default url: `http://localhost:5000`
+
+#### Tests
+- you can run the following command (from the root directory)
+```
+python3 test_app.py
 ```
 
-The JSON data from Github will be paginated (you'll receive around 100 repos per JSON page). You can ignore the subsequent pages since you only need the first 100 repositories.
+### API Reference
+#### Getting Started
+Base URL: you can run locally `http://localhost:5000`
+<br>
+Authentication: No authentication needed at the current point.
+#### Error Handling
+Errors are returned as JSON objects in the following format:
+```
+{
+  "success": false,
+  "error": 404,
+  "message": "Resource Not Found"
+}
+```
+types of errors:
+- 404: Resource Not Found
+- 500: Internal Server Error
 
-If you want to learn more about the Github API, you can click on the following [link](https://developer.github.com/v3/).
-
-
-## How we evaluate?
-
-[Read how we review your code](https://www.notion.so/Read-how-we-review-your-code-8581e6a340084c8c924b681ea9790f45)
-
-## Useful links
-
-[Useful links can be found here.](https://www.notion.so/Useful-links-can-be-found-here-112d962342194caaa40f61e1a6a34513)
-
-## Have an existing repo ?
-
-If you have an existing Github repo you can share with us, please reply to our email and share with us the link to your Github repo. Keep in mind that we'll evaluate that repo the same way we review other coding challenge. 
-
-Please make sure you read [how we evaluate your repo](https://www.notion.so/hiddenpole/Read-how-we-review-your-code-413052895a0d4720895c2c433630c8f9).
+### Endpoints
+**Before running any authorized endpoint, please make sure you setup NOT expired tokens in `./setup.sh`**<br>
+**then running the command `source ./setup.sh`**
+#### GET /trending_repos
+- ##### General:
+  - Return a list of repos classified by each language and a success value.
+  - `repos_num` is a query param to control the number of repos which will get classified.
+  - `repos_num` query param can **not** exceed the `MAX_PER_PAGE` value which exists in `github_query_params.py`.
+  - if `repos_num` is not given, the default value will be `PER_PAGE` value which exists in `github_query_params.py`
+- `curl -X GET 'http://localhost:5000/trending_repos?repos_num=10'`
+```
+{
+  "repos": [
+    {
+      "count": 3, 
+      "language": "python", 
+      "repos": [
+        "https://github.com/beurtschipper/Depix", 
+        "https://github.com/benwilber/boltstream", 
+        "https://github.com/r0ysue/r0capture"
+      ]
+    }, 
+    {
+      "count": 1, 
+      "language": "yara", 
+      "repos": [
+        "https://github.com/fireeye/red_team_tool_countermeasures"
+      ]
+    }, 
+    {
+      "count": 1, 
+      "language": "css", 
+      "repos": [
+        "https://github.com/bradtraversy/50projects50days"
+      ]
+    }, 
+    {
+      "count": 1, 
+      "language": "typescript", 
+      "repos": [
+        "https://github.com/getmeli/meli"
+      ]
+    }, 
+    {
+      "count": 1, 
+      "language": "html", 
+      "repos": [
+        "https://github.com/bobbyiliev/introduction-to-bash-scripting"
+      ]
+    }
+  ], 
+  "success": true
+}
+```
