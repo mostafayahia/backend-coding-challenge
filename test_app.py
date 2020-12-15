@@ -37,6 +37,7 @@ class TrendingReposTestCase(unittest.TestCase):
         self.assertEqual(data['error'], 404)
         self.assertEqual(data['message'], 'Resource Not Found')
 
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

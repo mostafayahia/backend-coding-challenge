@@ -11,6 +11,7 @@ from github_query_params import (
 
 from datetime import datetime
 
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -24,7 +25,8 @@ def create_app(test_config=None):
         per_page = request.args.get('repos_num', PER_PAGE, int)
 
         # if requested repos > MAX_PER_PAGE, Will be considered 404 error
-        if (per_page > MAX_PER_PAGE): abort(404)
+        if (per_page > MAX_PER_PAGE):
+            abort(404)
 
         today = datetime.today()
 
@@ -36,20 +38,21 @@ def create_app(test_config=None):
             '&order=' + ORDER + \
             '&page=' + str(PAGE) + \
             '&per_page=' + str(per_page)
-        
+
         data = json.loads(requests.get(url).text)['items']
 
         # extract from every entry -> the language and the coresponding repo for this language
         # using this info to construct our dictionary to send it as a response
         language_dict = {}
         for e in data:
-            if not e['language']: continue
+            if not e['language']:
+                continue
             language = e['language'].lower().strip()
             repo_url = e['html_url']
             repo_url_list = language_dict.get(language, [])
             repo_url_list.append(repo_url)
             language_dict[language] = repo_url_list
-        
+
         return jsonify({
             'success': True,
             'repos': [
@@ -58,11 +61,11 @@ def create_app(test_config=None):
                     'count': len(language_dict[language]),
                     'repos': language_dict[language]
                 } for language in language_dict
-                ]
+            ]
         })
 
-
     # handling errors
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
@@ -80,6 +83,7 @@ def create_app(test_config=None):
         }), 500
 
     return app
+
 
 app = create_app()
 
