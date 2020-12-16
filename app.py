@@ -33,7 +33,7 @@ def create_app(test_config=None):
         # construct the url to retrieve the data from github api
         # get all repos which was created since month ago from today
         url = 'https://api.github.com/search/repositories?' + \
-            'q=created:%3E' + '{}-{}-{}'.format(today.year, today.month - 1, today.day) + \
+            'q=created:%3E' + '{}-{}-{}'.format(today.year, 12 if today.month == 1 else today.month - 1, today.day) + \
             '&sort=' + SORT + \
             '&order=' + ORDER + \
             '&page=' + str(PAGE) + \
